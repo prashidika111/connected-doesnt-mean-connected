@@ -1,0 +1,172 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply text-slate-800 antialiased;
+    background: #ffffff;
+    font-family: "Times New Roman", Times, serif !important;
+    font-feature-settings: normal;
+  }
+
+  *,
+  *::before,
+  *::after {
+    font-family: "Times New Roman", Times, serif !important;
+  }
+
+  code,
+  pre {
+    font-family: Consolas, "Courier New", monospace !important;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font-family: "Times New Roman", Times, serif !important;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 3px solid #91bce9;
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: #c9e0ff;
+    color: #243f5c;
+  }
+}
+
+/* Clean white page backgrounds */
+:root {
+  color-scheme: light;
+}
+
+body,
+.bg-slate-50 {
+  background-color: #ffffff !important;
+}
+
+.bg-white {
+  background-color: #ffffff !important;
+}
+
+/* Slightly stronger pastel-blue surfaces */
+.bg-blue-50,
+.bg-brand-50 {
+  background-color: #e3efff !important;
+}
+
+.bg-blue-100,
+.bg-brand-100 {
+  background-color: #c9e0ff !important;
+}
+
+/* Stronger pastel-blue primary buttons and accents */
+.bg-brand-600,
+.bg-brand-700,
+.bg-brand-800 {
+  background-color: #a9cdf5 !important;
+}
+
+/* Keep primary button text readable */
+button.bg-brand-600,
+button.bg-brand-700,
+button.bg-brand-800 {
+  color: #243f5c !important;
+  border-color: #91bce9 !important;
+}
+
+.hover\:bg-brand-700:hover,
+.hover\:bg-brand-800:hover {
+  background-color: #91bce9 !important;
+}
+
+button.bg-brand-600:hover,
+button.bg-brand-700:hover,
+button.bg-brand-800:hover {
+  background-color: #91bce9 !important;
+}
+
+/* Darker blue text for contrast */
+.text-brand-700,
+.text-brand-800 {
+  color: #416b99 !important;
+}
+
+.text-brand-950 {
+  color: #243f5c !important;
+}
+
+/* Borders and subtle panels */
+.border-blue-100,
+.border-brand-100 {
+  border-color: #c9def5 !important;
+}
+
+.border-slate-200 {
+  border-color: #e5eaf0;
+}
+
+/* Gentle hover states for navigation and secondary controls */
+.hover\:bg-blue-50:hover {
+  background-color: #e3efff !important;
+}
+
+.hover\:bg-slate-50:hover,
+.hover\:bg-slate-100:hover {
+  background-color: #f3f7fb !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f8fc;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1d5eb;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a9c1da;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
