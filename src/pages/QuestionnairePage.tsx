@@ -49,7 +49,6 @@ export const QuestionnairePage: React.FC<QuestionnairePageProps> = ({
     if (currentStepIndex < totalQuestions - 1) {
       setCurrentStepIndex((prev) => prev + 1);
     } else {
-      // Completed last question, submit
       onSubmit();
     }
   };
@@ -63,8 +62,10 @@ export const QuestionnairePage: React.FC<QuestionnairePageProps> = ({
     }
   };
 
-  // Demo Presets for Faculty Evaluation
-  const loadPreset = (presetName: 'dns' | 'offline' | 'http_error' | 'inconclusive') => {
+  // Quick Symptom Profiles for exploration
+  const loadPreset = (
+    presetName: 'dns' | 'offline' | 'http_error' | 'inconclusive' | 'general_outage'
+  ) => {
     if (presetName === 'dns') {
       onAnswerChange('Q_LINK_STATUS', 'LINK_WIFI_ETH_OK');
       onAnswerChange('Q_TARGET_TYPE', 'TARGET_WEBSITE_NAME');
@@ -86,6 +87,13 @@ export const QuestionnairePage: React.FC<QuestionnairePageProps> = ({
       onAnswerChange('Q_SYMPTOM_ERROR', 'ERROR_HTTP_STATUS');
       onAnswerChange('Q_DIRECT_IP', 'IP_NOT_TESTED');
       setCurrentStepIndex(totalQuestions - 1);
+    } else if (presetName === 'general_outage') {
+      onAnswerChange('Q_LINK_STATUS', 'LINK_WIFI_ETH_OK');
+      onAnswerChange('Q_TARGET_TYPE', 'TARGET_WEBSITE_NAME');
+      onAnswerChange('Q_SCOPE', 'SCOPE_ALL_APPS_DEAD');
+      onAnswerChange('Q_SYMPTOM_ERROR', 'ERROR_NO_INTERNET_BANNER');
+      onAnswerChange('Q_DIRECT_IP', 'IP_FAILS');
+      setCurrentStepIndex(totalQuestions - 1);
     } else if (presetName === 'inconclusive') {
       onAnswerChange('Q_LINK_STATUS', 'LINK_NOT_SURE');
       onAnswerChange('Q_TARGET_TYPE', 'TARGET_NOT_SURE');
@@ -97,7 +105,7 @@ export const QuestionnairePage: React.FC<QuestionnairePageProps> = ({
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-6 sm:py-10 space-y-8">
+    <div className="max-w-3xl mx-auto py-6 sm:py-10 space-y-8 animate-fadeIn">
       {/* Disclaimer reminder */}
       <DisclaimerBanner compact />
 
@@ -125,7 +133,7 @@ export const QuestionnairePage: React.FC<QuestionnairePageProps> = ({
                     setCurrentStepIndex(idx);
                   }}
                   title={`Jump to Question ${idx + 1}`}
-                  className={`w-7 h-7 rounded-full text-xs font-semibold flex items-center justify-center transition-all ${
+                  className={`w-7 h-7 rounded-full text-xs font-semibold flex items-center justify-center transition-all cursor-pointer ${
                     isCurrent
                       ? 'bg-brand-600 text-white ring-2 ring-brand-300'
                       : isAnswered
@@ -166,10 +174,10 @@ export const QuestionnairePage: React.FC<QuestionnairePageProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={handlePrevious}
-            className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-medium text-sm flex items-center gap-2 transition-colors cursor-pointer"
+            className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-medium text-xs sm:text-sm flex items-center gap-2 transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>{currentStepIndex === 0 ? 'Back to Overview' : 'Previous'}</span>
+            <span>{currentStepIndex === 0 ? 'Back to Overview' : 'Previous Question'}</span>
           </button>
 
           <button
@@ -184,47 +192,53 @@ export const QuestionnairePage: React.FC<QuestionnairePageProps> = ({
 
         <button
           onClick={handleNext}
-          className="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm flex items-center gap-2 shadow-sm transition-all cursor-pointer focus:outline-none focus:ring-4 focus:ring-brand-200"
+          className="px-6 py-2.5 rounded-xl bg-brand-700 hover:bg-brand-800 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-all cursor-pointer focus:outline-none focus:ring-4 focus:ring-brand-200"
         >
           <span>
             {currentStepIndex === totalQuestions - 1
-              ? 'Show my explanation'
-              : 'Next question'}
+              ? 'Evaluate Symptoms'
+              : 'Next Question'}
           </span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
 
-      {/* Fast Demo Presets Toolbar (Ideal for Professor / Faculty review) */}
+      {/* Quick Symptom Profiles for Exploration */}
       <div className="border-t border-slate-200 pt-6 space-y-3">
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
           <BookmarkCheck className="w-4 h-4 text-brand-600" />
-          <span>Example answers for demonstration</span>
+          <span>Quick Symptom Profiles</span>
         </div>
         <div className="flex flex-wrap gap-2 text-xs">
           <button
             onClick={() => loadPreset('dns')}
-            className="px-3 py-1.5 rounded-lg bg-brand-50 hover:bg-brand-100 text-brand-800 border border-brand-200 transition-colors font-medium"
+            className="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-brand-800 border border-blue-200 transition-colors font-medium cursor-pointer"
           >
-            Show a DNS failure example
+            1. DNS Failure (DNS-01)
           </button>
           <button
-            onClick={() => loadPreset('offline')}
-            className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors font-medium"
+            onClick={() => loadPreset('general_outage')}
+            className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors font-medium cursor-pointer"
           >
-            Show a disconnected device example
+            2. "Connected, No Internet" (IND-07)
           </button>
           <button
             onClick={() => loadPreset('http_error')}
-            className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors font-medium"
+            className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors font-medium cursor-pointer"
           >
-            Show a web server error example
+            3. Web Server Error (HTTP-05)
+          </button>
+          <button
+            onClick={() => loadPreset('offline')}
+            className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors font-medium cursor-pointer"
+          >
+            4. Disconnected Device (LAN-03)
           </button>
           <button
             onClick={() => loadPreset('inconclusive')}
-            className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors font-medium"
+            className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors font-medium cursor-pointer"
           >
-            Show an uncertain example
+            5. Inconclusive Clues
           </button>
         </div>
       </div>

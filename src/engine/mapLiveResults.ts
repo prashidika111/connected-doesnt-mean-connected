@@ -57,7 +57,7 @@ export function evaluationFromLiveInvestigation(
       summary: `From the diagnostic helper, ${targetLabel} did not resolve to an IP address. A browser using this same resolver path would not know which host to contact.`,
       certainty: 'CONFIRMED_BY_CHECK',
       certaintyExplanation:
-        'The DNS failure was measured by Node.js dns.lookup on the machine running this app. It is not a capture of your laptop’s stub resolver, and it does not prove your Wi Fi is healthy.',
+        'The DNS failure was measured by Node.js dns.lookup on the machine running this app. It is not a capture of your laptop’s stub resolver, and it does not prove your Wi-Fi is healthy.',
       evidence: evidenceFromChecks,
       plainLanguageExplanation:
         'The internet routes packets to numbers, not names. If the name cannot be translated into an IP address, the web request stops before any TCP handshake toward a web server.',
@@ -76,7 +76,7 @@ export function evaluationFromLiveInvestigation(
         'A missing public DNS record is different from a broken home DNS setting, but both produce “server IP address could not be found” in a browser.',
       ],
       recommendedAction:
-        'Compare this with the DNS Packet Tracer lab, where the client DNS server IP is pointed at a non-existent address while direct IP ping still works.',
+        'Compare this with the DNS Packet Tracer lab (DNS-01), where the client DNS server IP is pointed at a non-existent address while direct IP ping still works.',
     };
   }
 
@@ -112,7 +112,7 @@ export function evaluationFromLiveInvestigation(
         'This is not a scan of your LAN and not a Packet Tracer API result.',
       ],
       recommendedAction:
-        'A separate service failure simulation is not included in the supplied Packet Tracer file.',
+        'Compare this with scenario SRV-04 in the Scenario Library to observe how Layer 3 ping and DNS can work while Layer 4 TCP port 80/443 is refused or stopped.',
     };
   }
 
@@ -121,25 +121,25 @@ export function evaluationFromLiveInvestigation(
     if (statusCode >= 400) {
       return {
         outcome: 'CONTRASTING_SERVER_ERROR',
-        scenarioId: null,
+        scenarioId: 'HTTP-05',
         title: 'Network Path Worked; The Web Server Returned an Error Page',
-        summary: `HTTP ${statusCode} was received from ${targetLabel}. DNS and TCP succeeded from the helper, so the failure is at the application.`,
+        summary: `HTTP ${statusCode} was received from ${targetLabel}. DNS and TCP succeeded from the helper, so the network path is fully operational and the error originates in the web server application.`,
         certainty: 'CONFIRMED_BY_CHECK',
         certaintyExplanation:
-          'An HTTP status code proves the helper completed DNS (if needed), TCP, and an HTTP exchange. That still does not describe your phone’s Wi Fi.',
+          'An HTTP status code proves the helper completed DNS (if needed), TCP 3-way handshake, and an HTTP request/response exchange.',
         evidence: evidenceFromChecks,
         plainLanguageExplanation:
-          'Seeing 404 or 500 means the network did its job: the name was found, the server was contacted, and the server answered. The page or application then reported an error.',
+          'Seeing 404 or 500 means the network did its job completely: the name was found, the server was reached, and the server answered. The page was simply missing or crashed on the server.',
         technicalExplanation: http.detail,
         whatIsWorking: [
           'DNS (if the target was a hostname).',
           `TCP port ${investigation.target.port}.`,
-          'HTTP response received.',
+          'HTTP response received successfully.',
         ],
-        whatIsFailing: ['Application content or server side logic on the destination.'],
+        whatIsFailing: ['Application content or server-side logic on the destination host.'],
         limitations: [http.limitations],
         recommendedAction:
-          'This is the opposite of a DNS outage. The DNS learning scenario does not demonstrate this fault.',
+          'Compare this with scenario HTTP-05 in the Scenario Library, illustrating how application errors are distinct from network reachability failures.',
       };
     }
   }
@@ -161,14 +161,14 @@ export function evaluationFromLiveInvestigation(
       plainLanguageExplanation:
         'If a website loads from this checker but not from your laptop, the break is likely local to your device or network, not a global outage of that name. Use the symptom questionnaire to reason about which local stage might differ.',
       technicalExplanation:
-        'Measured helper DNS and TCP succeeded. HTTP may be passed or inconclusive (for example CORS is irrelevant here; TLS or redirects were bounded).',
+        'Measured helper DNS and TCP succeeded. HTTP may be passed or inconclusive (for example TLS or redirects were bounded).',
       whatIsWorking: [
         'Public DNS and/or TCP from the helper host to this target.',
       ],
       whatIsFailing: ['No helper-measured failure on the tested stages.'],
       limitations: investigation.checks.map((c) => c.limitations),
       recommendedAction:
-        'If your device still cannot load the URL, complete the five-question questionnaire — helper success does not diagnose Wi Fi, VPN, or a local DNS override.',
+        'If your device still cannot load the URL, complete the five-question questionnaire — helper success does not diagnose Wi-Fi, VPN, or a local DNS override.',
     };
   }
 

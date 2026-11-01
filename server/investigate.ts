@@ -719,13 +719,12 @@ export async function handleInvestigateRequest(
     const result = await runInvestigation(target);
     res.statusCode = result.accepted ? 200 : 400;
     res.end(JSON.stringify(result));
-  } catch (err: unknown) {
-    const error = err as Error;
+  } catch (_err: unknown) {
     res.statusCode = 500;
     res.end(
       JSON.stringify({
-        error: 'Investigation helper failed',
-        message: error.message,
+        error: 'Investigation helper encountered an error.',
+        message: 'The diagnostic probe could not be completed safely.',
       })
     );
   }

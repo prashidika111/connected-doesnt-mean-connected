@@ -9,6 +9,10 @@ const BLOCKED_HOSTNAMES = new Set([
   'ip6-localhost',
   'ip6-loopback',
   'metadata.google.internal',
+  'metadata.internal',
+  'metadata',
+  'instance-data',
+  'kubernetes.default.svc',
 ]);
 
 function issue(code: string, message: string): ValidationIssue {
@@ -54,9 +58,9 @@ export function isNonPublicIpv4(octets: number[]): boolean {
 
   if (inCidr(ip, ipv4ToInt([0, 0, 0, 0]), 8)) return true;
   if (inCidr(ip, ipv4ToInt([10, 0, 0, 0]), 8)) return true;
-  if (inCidr(ip, ipv4ToInt([100, 64, 0, 0]), 10)) return true;
+  if (inCidr(ip, ipv4ToInt([100, 64, 0, 0]), 10)) return true; // Carrier-Grade NAT & Cloud metadata
   if (inCidr(ip, ipv4ToInt([127, 0, 0, 0]), 8)) return true;
-  if (inCidr(ip, ipv4ToInt([169, 254, 0, 0]), 16)) return true;
+  if (inCidr(ip, ipv4ToInt([169, 254, 0, 0]), 16)) return true; // Link-local & AWS/Azure metadata 169.254.169.254
   if (inCidr(ip, ipv4ToInt([172, 16, 0, 0]), 12)) return true;
   if (inCidr(ip, ipv4ToInt([192, 0, 0, 0]), 24)) return true;
   if (inCidr(ip, ipv4ToInt([192, 0, 2, 0]), 24)) return true; // TEST-NET-1
@@ -178,7 +182,9 @@ function isValidHostname(hostname: string): boolean {
 }
 
 function looksLikeIpv6(value: string): boolean {
-  return value.includes(':') && !value.includes('://');
+  if (value.startsWith('[') && value.includes(']')) return true;
+  const colons = (value.match(/:/g) || []).length;
+  return colons >= 2;
 }
 
 function stripBrackets(host: string): string {
@@ -206,6 +212,9 @@ export function parseInvestigationTarget(raw: string): TargetParseResult {
   if (typeof raw !== 'string') {
     return fail(issue('NOT_STRING', 'Target must be a text URL or IP address.'));
   }
+  if (/[\r\n\t\u0000-\u001f\u007f]/.test(raw)) {
+    return fail(issue('CONTROL_CHARS', 'Target contains control characters or newlines and cannot be used.'));
+  }
 
   const trimmed = raw.trim();
   if (!trimmed) {
@@ -213,9 +222,6 @@ export function parseInvestigationTarget(raw: string): TargetParseResult {
   }
   if (trimmed.length > MAX_INPUT_LENGTH) {
     return fail(issue('TOO_LONG', 'Target is too long to investigate.'));
-  }
-  if (/[\u0000-\u001f\u007f]/.test(trimmed)) {
-    return fail(issue('CONTROL_CHARS', 'Target contains control characters and cannot be used.'));
   }
   if (/\s/.test(trimmed)) {
     return fail(issue('WHITESPACE', 'Remove spaces from the URL or IP address.'));
@@ -353,7 +359,7 @@ function finalizeTarget(
     return fail(
       issue(
         'NON_PUBLIC_HOST',
-        'Loopback, local, and metadata hostnames are blocked. This tool only investigates public internet names.'
+        'Loopback, local, and cloud metadata hostnames are blocked. This tool only investigates public internet names.'
       )
     );
   }

@@ -65,8 +65,15 @@ export interface ScenarioExperiment {
   }[];
   fileStatus: {
     hasVerifiedPkt: boolean;
-    suggestedFileName: string;
-    fileDirectory: string;
-    manualStepsRequired: string[];
+    isCiscoProofOfConcept?: boolean;
+    simulatedInBrowser?: boolean;
+    suggestedFileName?: string;
+    fileDirectory?: string;
+    manualStepsRequired?: string[];
   };
+  studyQuestions?: {
+    question: string;
+    answer: string;
+    networkingConcept: string;
+  }[];
 }

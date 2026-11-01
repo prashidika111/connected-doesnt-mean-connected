@@ -40,9 +40,17 @@ export function pathStagesFromChecks(checks: CheckOutcome[]): PathStageView[] {
 
   const dnsFailed = dns?.status === 'failed';
 
-  const destinationStatus: StageStatus = dnsFailed
-    ? 'bypassed'
-    : visualStatus(http?.status ?? tcp?.status, 'untested');
+  let destinationStatus: StageStatus = 'untested';
+  if (dnsFailed) {
+    destinationStatus = 'bypassed';
+  } else if (http && http.status !== 'not-tested') {
+    destinationStatus = visualStatus(http.status, 'untested');
+    if (http.status === 'passed' && Number(http.evidence?.statusCode ?? 0) >= 400) {
+      destinationStatus = 'warning';
+    }
+  } else if (tcp && tcp.status !== 'not-tested') {
+    destinationStatus = visualStatus(tcp.status, 'untested');
+  }
 
   // Gateway: inferred only — helper is not the user's home router.
   let gatewayVisual: StageStatus = 'untested';

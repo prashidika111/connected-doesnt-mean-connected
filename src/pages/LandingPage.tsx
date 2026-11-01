@@ -1,106 +1,319 @@
 import React, { useState } from 'react';
-import { Activity, ArrowRight, BookOpen, Network, ShieldCheck } from 'lucide-react';
+import {
+  Activity,
+  ArrowRight,
+  BookOpen,
+  Network,
+  Search,
+  CheckCircle2,
+  XCircle,
+  Laptop,
+  Wifi,
+  Router,
+  Globe,
+  Server,
+} from 'lucide-react';
 
 interface LandingPageProps {
-  onStartQuestions: () => void;
+  onStartQuestions: (initialSymptom?: string) => void;
   onOpenSimulation: () => void;
   onOpenAbout: () => void;
   onOpenInvestigation: (target: string) => void;
 }
 
+const COMMON_SYMPTOMS = [
+  {
+    id: 'symptom_web_wont_open',
+    title: 'A website will not open at all',
+    description: 'The browser spins and eventually times out or says the site cannot be reached.',
+  },
+  {
+    id: 'symptom_some_work_others_dont',
+    title: 'Some websites work, but others do not',
+    description: 'You can reach search engines or chat apps, but specific web pages fail.',
+  },
+  {
+    id: 'symptom_connected_no_internet',
+    title: 'Device says "Connected", but there is no internet',
+    description: 'Wi-Fi or Ethernet shows connected, but no website or service opens.',
+  },
+  {
+    id: 'symptom_ip_works_name_fails',
+    title: 'A website works by IP address, but not by name',
+    description: 'Entering numbers like 192.168.0.20 opens the page, but domain names fail.',
+  },
+  {
+    id: 'symptom_dont_know',
+    title: 'I do not know what is wrong',
+    description: 'Step through 5 quick guided questions to evaluate symptoms methodically.',
+  },
+];
+
 export const LandingPage: React.FC<LandingPageProps> = ({
-  onStartQuestions, onOpenSimulation, onOpenAbout, onOpenInvestigation,
+  onStartQuestions,
+  onOpenSimulation,
+  onOpenAbout,
+  onOpenInvestigation,
 }) => {
-  const [target, setTarget] = useState('https://example.com');
+  const [quickTarget, setQuickTarget] = useState('https://example.com');
 
   return (
-    <div className="mx-auto max-w-6xl space-y-12 py-8 sm:py-12">
-      <section className="grid items-center gap-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="space-y-5">
-          <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-800">
-            <Activity className="h-4 w-4" /> Network diagnosis and learning
+    <div className="mx-auto max-w-6xl space-y-12 py-8 sm:py-12 animate-fadeIn">
+      {/* Hero Section */}
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-10 shadow-xs space-y-6">
+        <div className="max-w-3xl space-y-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-semibold text-brand-800">
+            <Activity className="h-4 w-4 text-brand-600" /> Educational Network Diagnostic & Learning System
           </div>
-          <h1 className="max-w-2xl text-3xl font-bold leading-tight tracking-tight text-slate-950 sm:text-5xl">
-            Find where a network connection may be failing.
+          <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight tracking-tight text-slate-900">
+            Your device says it's connected. <br className="hidden sm:inline" />
+            <span className="text-brand-700">So why isn't the website loading?</span>
           </h1>
-          <p className="max-w-2xl text-base leading-7 text-slate-600">
-            Test a website, describe a connection problem, or explore a controlled network scenario. See what the available evidence shows and what it cannot prove.
+          <p className="text-base sm:text-lg leading-relaxed text-slate-600">
+            Find out what might be going wrong. Get guided through a connection problem, test a website,
+            or explore an interactive network experiment.
           </p>
-          <div className="flex flex-wrap gap-3">
-            <button onClick={onStartQuestions} className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-3 font-semibold text-slate-800 hover:bg-slate-50">
-              <BookOpen className="h-4 w-4" /> Answer guided questions
-            </button>
-            <button onClick={onOpenSimulation} className="inline-flex items-center gap-2 rounded-xl px-4 py-3 font-semibold text-brand-800 hover:bg-blue-50">
-              <Network className="h-4 w-4" /> Explore network scenarios
-            </button>
-          </div>
         </div>
-        <form onSubmit={(event) => { event.preventDefault(); onOpenInvestigation(target); }} className="rounded-2xl border border-blue-100 bg-slate-50 p-5 sm:p-6">
-          <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-brand-700 text-white"><Activity className="h-5 w-5" /></div>
-          <h2 className="text-xl font-bold text-slate-900">Test a website or IP address</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">Run DNS, connection and web response checks where applicable.</p>
-          <label htmlFor="home-target" className="mt-5 block text-sm font-semibold text-slate-800">Website address or IP address</label>
-          <input id="home-target" value={target} onChange={(event) => setTarget(event.target.value)} maxLength={2048} required
-            placeholder="https://example.com or 8.8.8.8"
-            className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-500" />
-          <button type="submit" className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-700 px-4 py-3 font-semibold text-white hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-blue-200">
-            Run network checks <ArrowRight className="h-4 w-4" />
-          </button>
-          <p className="mt-3 text-xs leading-5 text-slate-500">Checks run from the computer hosting this application, not directly from your phone or laptop.</p>
-        </form>
-      </section>
 
-      <section className="space-y-4">
-        <div className="max-w-2xl space-y-2">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900">Three ways to understand a connection</h2>
-          <p className="text-slate-600">Choose the approach that matches what you know about the problem.</p>
-        </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          <article className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6">
-            <Activity className="h-6 w-6 text-brand-700" />
-            <h3 className="mt-4 text-lg font-bold text-slate-900">Test a destination</h3>
-            <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">Check name resolution, connection attempts and web responses. Each result includes its source and limitations.</p>
-            <button onClick={() => onOpenInvestigation(target)} className="mt-5 inline-flex items-center gap-2 self-start font-semibold text-brand-800 hover:text-brand-950">Open destination checks <ArrowRight className="h-4 w-4" /></button>
-          </article>
-          <article className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6">
-            <BookOpen className="h-6 w-6 text-brand-700" />
-            <h3 className="mt-4 text-lg font-bold text-slate-900">Understand a connection problem</h3>
-            <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">Answer five guided questions and receive a cautious explanation based on your answers.</p>
-            <button onClick={onStartQuestions} className="mt-5 inline-flex items-center gap-2 self-start font-semibold text-brand-800 hover:text-brand-950">Start guided diagnosis <ArrowRight className="h-4 w-4" /></button>
-          </article>
-          <article className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6">
-            <Network className="h-6 w-6 text-brand-700" />
-            <h3 className="mt-4 text-lg font-bold text-slate-900">Explore network scenarios</h3>
-            <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">Learn how a controlled DNS failure can stop domain access even when direct IP access still works.</p>
-            <button onClick={onOpenSimulation} className="mt-5 inline-flex items-center gap-2 self-start font-semibold text-brand-800 hover:text-brand-950">Open scenario guide <ArrowRight className="h-4 w-4" /></button>
-          </article>
-        </div>
-      </section>
-
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
-        <div className="flex items-start gap-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><ShieldCheck className="h-5 w-5" /></div>
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold text-slate-900">What these checks can and cannot tell you</h2>
-            <p className="text-sm leading-6 text-slate-600">The diagnostic service checks a public destination from the computer running this application. It cannot directly inspect your device Wi Fi, home router, local gateway or the entire route your traffic takes.</p>
-            <div className="flex flex-wrap gap-2 pt-1 text-xs font-medium text-slate-700">
-              <span className="rounded-full bg-slate-100 px-3 py-1.5">DNS lookup</span>
-              <span className="rounded-full bg-slate-100 px-3 py-1.5">TCP connection</span>
-              <span className="rounded-full bg-slate-100 px-3 py-1.5">Web response</span>
-              <span className="rounded-full bg-slate-100 px-3 py-1.5">Evidence and uncertainty</span>
+        {/* Three Primary Entry Cards */}
+        <div className="grid gap-6 md:grid-cols-3 pt-2">
+          {/* Card 1: Diagnose a problem */}
+          <article className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-slate-50/60 p-6 shadow-xs hover:border-brand-400 hover:bg-white transition-all group">
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                <BookOpen className="h-6 w-6" />
+              </div>
+              <h2 className="text-lg font-bold text-slate-900 group-hover:text-brand-900 transition-colors">
+                Diagnose a Problem
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Answer a few simple questions to understand what may be wrong with your connection.
+                Eliminates working layers and identifies likely causes.
+              </p>
             </div>
-          </div>
+            <button
+              onClick={() => onStartQuestions()}
+              className="mt-6 inline-flex items-center gap-1.5 text-xs font-bold text-brand-700 hover:text-brand-900 cursor-pointer"
+            >
+              <span>Start Guided Diagnosis</span>
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </article>
+
+          {/* Card 2: Test a website */}
+          <article className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-slate-50/60 p-6 shadow-xs hover:border-brand-400 hover:bg-white transition-all group">
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-blue-100 text-brand-800 flex items-center justify-center">
+                <Search className="h-6 w-6" />
+              </div>
+              <h2 className="text-lg font-bold text-slate-900 group-hover:text-brand-900 transition-colors">
+                Test a Website
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Check whether a website responds and see which communication steps succeed or fail — from finding the address to establishing contact.
+              </p>
+            </div>
+            <button
+              onClick={() => onOpenInvestigation(quickTarget)}
+              className="mt-6 inline-flex items-center gap-1.5 text-xs font-bold text-brand-700 hover:text-brand-900 cursor-pointer"
+            >
+              <span>Open Website Tester</span>
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </article>
+
+          {/* Card 3: Explore the network lab */}
+          <article className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-slate-50/60 p-6 shadow-xs hover:border-brand-400 hover:bg-white transition-all group">
+            <div className="space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-800 flex items-center justify-center">
+                <Network className="h-6 w-6" />
+              </div>
+              <h2 className="text-lg font-bold text-slate-900 group-hover:text-brand-900 transition-colors">
+                Explore the Network Lab
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Watch how a request moves through a network and discover what happens when a component fails.
+                Interactive simulations with step-by-step packet inspection.
+              </p>
+            </div>
+            <button
+              onClick={onOpenSimulation}
+              className="mt-6 inline-flex items-center gap-1.5 text-xs font-bold text-brand-700 hover:text-brand-900 cursor-pointer"
+            >
+              <span>Explore Interactive Experiments</span>
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </article>
         </div>
       </section>
 
-      <section className="rounded-2xl bg-[#456A91] p-6 text-white sm:p-8">
-        <p className="text-sm font-semibold text-cyan-300">Learning scenario</p>
-        <h2 className="mt-2 text-2xl font-bold">A website name fails, but its IP address works</h2>
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">In the DNS demonstration, the client can reach the web server by its numerical address while the incorrect DNS setting prevents the domain name from resolving. The simulation guide explains how to reproduce and restore this state in Cisco Packet Tracer.</p>
-        <button onClick={onOpenSimulation} className="mt-5 rounded-xl bg-white px-4 py-3 font-semibold text-slate-950 hover:bg-slate-100">Read the DNS scenario guide</button>
+      {/* Visual Explanation of the Multi-Stage Journey */}
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="max-w-3xl space-y-2">
+          <div className="text-xs font-bold uppercase tracking-wider text-brand-700">
+            Why Connected Doesn’t Mean Connected
+          </div>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            A connection is a path of multiple stages, not a single light switch.
+          </h2>
+          <p className="text-sm leading-relaxed text-slate-600">
+            When your computer shows a Wi-Fi or network icon, it only proves that the first stage — the link to your local router — is active.
+            Every website visit must pass through five distinct stages. Communication can succeed at the beginning and break at any later point.
+          </p>
+        </div>
+
+        {/* Conceptual Five-Stage Path Demonstration */}
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 pt-2">
+          {[
+            { stage: '1. Your Device', role: 'Hardware & OS network stack', status: 'pass', icon: <Laptop className="h-5 w-5" /> },
+            { stage: '2. Local Connection', role: 'Wi-Fi or Ethernet cable', status: 'pass', icon: <Wifi className="h-5 w-5" /> },
+            { stage: '3. Gateway & Router', role: 'Local router & ISP routing', status: 'pass', icon: <Router className="h-5 w-5" /> },
+            { stage: '4. Name Resolution', role: 'DNS server lookup', status: 'fail', icon: <Globe className="h-5 w-5" /> },
+            { stage: '5. Destination Service', role: 'Web server application', status: 'blocked', icon: <Server className="h-5 w-5" /> },
+          ].map((item, idx) => (
+            <div
+              key={idx}
+              className={`rounded-2xl p-4 border text-center space-y-2 transition-all ${
+                item.status === 'pass'
+                  ? 'bg-emerald-50/80 border-emerald-200 text-emerald-950'
+                  : item.status === 'fail'
+                  ? 'bg-rose-50 border-rose-300 text-rose-950 ring-2 ring-rose-400'
+                  : 'bg-slate-50 border-slate-200 text-slate-400 opacity-70'
+              }`}
+            >
+              <div
+                className={`w-9 h-9 mx-auto rounded-xl flex items-center justify-center ${
+                  item.status === 'pass'
+                    ? 'bg-emerald-200/70 text-emerald-800'
+                    : item.status === 'fail'
+                    ? 'bg-rose-200 text-rose-800'
+                    : 'bg-slate-200 text-slate-500'
+                }`}
+              >
+                {item.icon}
+              </div>
+              <div className="font-bold text-xs">{item.stage}</div>
+              <div className="text-[11px] leading-tight opacity-80">{item.role}</div>
+
+              <div className="pt-1">
+                {item.status === 'pass' && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                    <CheckCircle2 className="h-3 w-3" /> Working
+                  </span>
+                )}
+                {item.status === 'fail' && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full animate-pulse">
+                    <XCircle className="h-3 w-3" /> Fails Here
+                  </span>
+                )}
+                {item.status === 'blocked' && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 bg-slate-200 px-2 py-0.5 rounded-full">
+                    Not Reached
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed">
+          <strong>The Result:</strong> In this common scenario, Stages 1, 2, and 3 are working perfectly, so your operating system reports that you are "Connected".
+          However, because Stage 4 (Name Resolution) fails, your browser never reaches Stage 5 (the website).
+        </div>
       </section>
 
-      <div className="text-center"><button onClick={onOpenAbout} className="text-sm font-semibold text-brand-800 underline decoration-blue-200 underline-offset-4 hover:text-brand-950">Read how the diagnostic system works</button></div>
+      {/* Common Symptoms Selector */}
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 space-y-4 shadow-xs">
+        <div className="max-w-2xl space-y-1">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+            What are you experiencing?
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600">
+            Select the symptom that matches your situation to begin guided diagnosis:
+          </p>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 pt-2">
+          {COMMON_SYMPTOMS.map((s) => (
+            <button
+              key={s.id}
+              onClick={() => onStartQuestions(s.id)}
+              className="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50/60 hover:border-brand-400 text-left transition-all cursor-pointer space-y-1.5 group"
+            >
+              <div className="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-brand-900 flex items-center justify-between">
+                <span>{s.title}</span>
+                <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-brand-700 transition-transform group-hover:translate-x-0.5" />
+              </div>
+              <p className="text-xs text-slate-500 leading-relaxed">{s.description}</p>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Featured Virtual Experiment Banner */}
+      <section className="rounded-3xl bg-slate-900 p-6 sm:p-8 text-white space-y-4 shadow-md">
+        <div className="inline-flex items-center gap-2 rounded-md bg-blue-500/20 px-2.5 py-1 text-xs font-mono font-bold text-cyan-300">
+          Featured Experiment: DNS Failure vs Direct IP
+        </div>
+        <h2 className="text-2xl font-bold tracking-tight">
+          A domain name fails, but direct IP access works perfectly.
+        </h2>
+        <p className="max-w-3xl text-xs sm:text-sm leading-relaxed text-slate-300">
+          In our verified Cisco Packet Tracer experiment (DNS-01), the client reaches the web server at{' '}
+          <code className="text-cyan-300 font-mono">192.168.0.20</code> by raw numerical address, while entering{' '}
+          <code className="text-cyan-300 font-mono">www.example.edu</code> fails because the DNS resolver address was intentionally misconfigured to{' '}
+          <code className="text-rose-300 font-mono">192.168.0.99</code>. Watch how Layer 3 IP routing succeeds while Layer 7 name resolution halts.
+        </p>
+        <button
+          onClick={onOpenSimulation}
+          className="rounded-xl bg-white px-5 py-2.5 text-xs sm:text-sm font-bold text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer shadow-xs"
+        >
+          Launch Interactive Experiment & Download .pkt
+        </button>
+      </section>
+
+      {/* Quick Website Test Bar */}
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 space-y-4 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h3 className="text-lg font-bold text-slate-900">Want to test a specific website right now?</h3>
+            <p className="text-xs text-slate-500">
+              Check address lookup, connection handshake, and server response from this server.
+            </p>
+          </div>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              onOpenInvestigation(quickTarget);
+            }}
+            className="flex items-center gap-2 w-full sm:w-auto"
+          >
+            <input
+              value={quickTarget}
+              onChange={(e) => setQuickTarget(e.target.value)}
+              placeholder="https://example.com"
+              className="rounded-xl border border-slate-300 px-3.5 py-2 text-xs sm:text-sm font-mono w-full sm:w-64 outline-none focus:ring-2 focus:ring-brand-500"
+            />
+            <button
+              type="submit"
+              className="rounded-xl bg-brand-700 px-4 py-2 text-xs sm:text-sm font-semibold text-white hover:bg-brand-800 transition-colors cursor-pointer whitespace-nowrap shadow-xs"
+            >
+              Test
+            </button>
+          </form>
+        </div>
+      </section>
+
+      {/* Technical Specification Link */}
+      <div className="text-center">
+        <button
+          onClick={onOpenAbout}
+          className="text-xs sm:text-sm font-semibold text-brand-700 underline decoration-blue-300 underline-offset-4 hover:text-brand-900 cursor-pointer"
+        >
+          Read How the System Works & Technical Boundaries →
+        </button>
+      </div>
     </div>
   );
 };
